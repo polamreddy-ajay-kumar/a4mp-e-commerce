@@ -37,7 +37,7 @@ export function ProductCard({ p }: { p: Product }) {
   );
 }
 
-export function ProductGrid({ items, loading }: { items?: Product[]; loading?: boolean }) {
+export function ProductGrid({ items, loading }: { items?: Product[] | undefined; loading?: boolean | undefined }) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

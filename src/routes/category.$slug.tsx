@@ -38,7 +38,7 @@ function CategoryPage() {
         </div>
         <div className="flex gap-1 rounded-lg bg-card p-1 text-sm shadow-card">
           {[["popular", "Popular"], ["low", "Price ↑"], ["high", "Price ↓"], ["rating", "Rating"]].map(([k, l]) => (
-            <button key={k} onClick={() => setSort(k)} className={`rounded-md px-3 py-1.5 font-medium ${sort === k ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{l}</button>
+            <button key={k} onClick={() => setSort(k!)} className={`rounded-md px-3 py-1.5 font-medium ${sort === k ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{l}</button>
           ))}
         </div>
       </div>
