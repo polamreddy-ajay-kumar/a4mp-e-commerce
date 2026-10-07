@@ -22,7 +22,7 @@ export function useCategories() {
   });
 }
 
-export function useProducts(opts: { category?: string; search?: string } = {}) {
+export function useProducts(opts: { category?: string | undefined; search?: string | undefined } = {}) {
   return useQuery({
     queryKey: ["products", opts],
     queryFn: async () => {

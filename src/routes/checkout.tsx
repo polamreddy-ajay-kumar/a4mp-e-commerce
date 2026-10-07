@@ -42,14 +42,14 @@ function Checkout() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const r = schema.safeParse(form);
-    if (!r.success) return toast.error(r.error.issues[0].message);
+    if (!r.success) { toast.error(r.error.issues[0]?.message ?? "Invalid details"); return; }
     if (!user) return;
     setBusy(true);
     const items = cart.map((i) => ({ id: i.product.id, title: i.product.title, image_url: i.product.image_url, price: i.product.price, quantity: i.quantity }));
     const { error } = await supabase.from("orders").insert({ ...r.data, items, total: price, user_id: user.id });
     if (!error) await supabase.from("cart_items").delete().eq("user_id", user.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["cart"] });
     qc.invalidateQueries({ queryKey: ["orders"] });
     toast.success("Order placed successfully!");
