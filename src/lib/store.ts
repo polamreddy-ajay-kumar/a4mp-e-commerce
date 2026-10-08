@@ -22,13 +22,20 @@ export function useCategories() {
   });
 }
 
-export function useProducts(opts: { category?: string | undefined; search?: string | undefined } = {}) {
+export function useProducts(opts: { category?: string | undefined; search?: string | undefined; limit?: number; sort?: string } = {}) {
   return useQuery({
     queryKey: ["products", opts],
+    placeholderData: (prev) => prev,
     queryFn: async () => {
-      let q = supabase.from("products").select("*").order("rating_count", { ascending: false });
+      const limit = opts.limit ?? 40;
+      let q = supabase.from("products").select("*");
+      if (opts.sort === "low") q = q.order("price", { ascending: true });
+      else if (opts.sort === "high") q = q.order("price", { ascending: false });
+      else if (opts.sort === "rating") q = q.order("rating", { ascending: false });
+      else q = q.order("rating_count", { ascending: false });
+      q = q.range(0, limit - 1);
       if (opts.category) q = q.eq("category_slug", opts.category);
-      if (opts.search) q = q.or(`title.ilike.%${opts.search}%,brand.ilike.%${opts.search}%`);
+      if (opts.search) q = q.or(`title.ilike.%${opts.search}%,brand.ilike.%${opts.search}%,category_slug.ilike.%${opts.search}%`);
       const { data, error } = await q;
       if (error) throw error;
       return data;
