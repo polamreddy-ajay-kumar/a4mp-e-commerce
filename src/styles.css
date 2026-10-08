@@ -87,3 +87,13 @@
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 }
+@utility stage {
+  background: radial-gradient(120% 90% at 50% 20%, var(--primary-deep), oklch(0.14 0.04 264));
+}
+@utility stage-glow {
+  background: radial-gradient(50% 40% at 50% 45%, color-mix(in oklab, var(--primary) 45%, transparent), transparent 70%);
+}
+@utility stage-floor {
+  background: radial-gradient(closest-side, oklch(0 0 0 / 55%), transparent);
+  filter: blur(6px);
+}
