@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useCategories, useProducts } from "@/lib/store";
 import { ProductGrid } from "@/components/ProductCard";
 
@@ -18,23 +18,17 @@ export const Route = createFileRoute("/category/$slug")({
 function CategoryPage() {
   const { slug } = Route.useParams();
   const { data: cats } = useCategories();
-  const { data, isLoading } = useProducts({ category: slug });
   const [sort, setSort] = useState("popular");
+  const [limit, setLimit] = useState(40);
+  const { data: items, isLoading, isFetching } = useProducts({ category: slug, sort, limit });
   const name = cats?.find((c) => c.slug === slug)?.name ?? slug;
-  const items = useMemo(() => {
-    const a = [...(data ?? [])];
-    if (sort === "low") a.sort((x, y) => x.price - y.price);
-    if (sort === "high") a.sort((x, y) => y.price - x.price);
-    if (sort === "rating") a.sort((x, y) => Number(y.rating) - Number(x.rating));
-    return a;
-  }, [data, sort]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">{name}</h1>
-          <p className="text-sm text-muted-foreground">{items.length} products</p>
+          <p className="text-sm text-muted-foreground">Showing {items?.length ?? 0} products</p>
         </div>
         <div className="flex gap-1 rounded-lg bg-card p-1 text-sm shadow-card">
           {[["popular", "Popular"], ["low", "Price ↑"], ["high", "Price ↓"], ["rating", "Rating"]].map(([k, l]) => (
@@ -43,6 +37,13 @@ function CategoryPage() {
         </div>
       </div>
       <ProductGrid items={items} loading={isLoading} />
+      {items && items.length >= limit && (
+        <div className="mt-6 text-center">
+          <button onClick={() => setLimit((l) => l + 40)} disabled={isFetching} className="rounded-lg bg-primary px-8 py-3 font-bold text-primary-foreground disabled:opacity-60">
+            {isFetching ? "Loading..." : "Load more"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
