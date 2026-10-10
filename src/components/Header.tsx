@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Search, ShoppingCart, User, Package, LogOut } from "lucide-react";
+import { Search, ShoppingCart, User, Package, LogOut, Shield } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { useIsAdmin } from "@/lib/admin";
 import { useCart, useCategories } from "@/lib/store";
 
 export function Header() {
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const { data: cart } = useCart();
   const { data: cats } = useCategories();
   const navigate = useNavigate();
@@ -38,6 +40,11 @@ export function Header() {
           <nav className="ml-auto flex items-center gap-1 md:ml-0">
             {user ? (
               <>
+                {isAdmin && (
+                  <Link to="/admin" className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium hover:bg-primary-foreground/10">
+                    <Shield className="h-4 w-4" /> <span className="hidden sm:inline">Admin</span>
+                  </Link>
+                )}
                 <Link to="/orders" className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium hover:bg-primary-foreground/10">
                   <Package className="h-4 w-4" /> <span className="hidden sm:inline">Orders</span>
                 </Link>
